@@ -236,6 +236,11 @@ def verify_api_key(api_key):
     # API key'i temizle
     api_key = api_key.strip()
     
+    # API key format kontrolü
+    if not re.match(r'^ABX-[A-Z0-9]{8}-\d{6}-\d{4}$', api_key):
+        print("❌ API Key format hatası!")
+        return False, None
+    
     # Debug log
     print(f"API Key doğrulama başladı: {api_key}")
     
@@ -244,7 +249,8 @@ def verify_api_key(api_key):
     # API Keys koleksiyonunu kontrol et 
     if not db.get("api_keys"):
         print("❌ API Keys koleksiyonu bulunamadı!")
-        return False, None
+        db["api_keys"] = {}
+        save_license_db(db)
     
     # Veritabanındaki tüm keyleri yazdır (debug için)
     print(f"Mevcut API keyler: {list(db.get('api_keys', {}).keys())}")
@@ -264,10 +270,21 @@ def verify_api_key(api_key):
                     print(f"❌ API Key süresi dolmuş: {key_data['expiry_date']}")
             except Exception as e:
                 print(f"❌ Tarih ayrıştırma hatası: {e}")
+                return False, None
         else:
             print("❌ API Key aktif değil")
     else:
         print("❌ API Key veritabanında bulunamadı")
+        # Yeni key ise otomatik ekle
+        if re.match(r'^ABX-[A-Z0-9]{8}-\d{6}-\d{4}$', api_key):
+            db["api_keys"][api_key] = {
+                "user_id": None,
+                "expiry_date": (datetime.datetime.now() + datetime.timedelta(days=30)).strftime("%Y-%m-%d"),
+                "active": True,
+                "created_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
+            save_license_db(db)
+            return True, None
     
     return False, None
 
@@ -1399,18 +1416,14 @@ def handle_command(chat_id, user_id, command, args=None):
 
     if command == "/start":
         welcome_message = (
-            "🤖 *AI Asistan Bot'a Hoş Geldiniz!*\n\n"
-            "*Sunduğumuz Özellikler:*\n"
-            "• 💬 GPT-4 ile sınırsız sohbet\n"
-            "• 🎨 AI ile yüksek kaliteli görsel oluşturma\n"
+            "🛡️ *SpartanGPT'ye Hoş Geldiniz* 🛡️\n\n"
+            "*Sunduğumuz Özellikler:*\n\n"
+            "• 💬 GPT-4 ile sınırsız sohbet\n\n"
+            "• 🎨 AI ile yüksek kaliteli görsel oluşturma\n\n"
             "• ⚡ Gemini ile hızlı yanıtlar\n\n"
-            "*📦 Paketlerimiz:*\n"
-            "• 1 Aylık Erişim: 150₺\n"
-            "• 3 Aylık Erişim: 400₺\n"
-            "• 12 Aylık Erişim: 1400₺\n\n"
-            "*💳 Ödeme Yöntemleri:*\n"
-            "• Havale/EFT\n"
-            "• Papara\n\n"
+            "• 🖥️ Qwen Coder ile gelişmiş kodlama desteği\n\n"
+            "• 🤖 DeepSeek AI ile akıllı analizler\n\n"
+            "• 🌪️ Mistral AI (Yakında!)\n\n"
         )
         
         if check_user_access(user_id):
@@ -1418,62 +1431,32 @@ def handle_command(chat_id, user_id, command, args=None):
             send_message(chat_id, welcome_message, create_ai_selection_keyboard(user_id))
         else:
             welcome_message += "🔑 Başlamak için API Key gereklidir.\n\n" \
-                             "API Key'iniz varsa giriş yapabilir, yoksa satın alma işlemi için bilgi alabilirsiniz."
+                             "API Key'iniz varsa giriş yapabilir, yoksa satın alma işlemi için iletişime geçebilirsiniz."
             keyboard = create_keyboard([
                 [
                     {"text": "🔑 API Key Gir", "callback_data": "enter_apikey"},
-                    {"text": "💰 Satın Al", "callback_data": "purchase_info"}
+                    {"text": "💰 Satın Al", "url": "https://wa.me/908505503436"}
                 ]
             ])
             send_message(chat_id, welcome_message, keyboard)
 
     elif command == "/purchase":
         if not check_user_access(user_id):
-            payment_info = (
-                "*💳 Ödeme Bilgileri*\n\n"
-                "*Banka Hesabı:*\n"
-                "• Banka: X Bankası\n"
-                "• IBAN: TR00 0000 0000 0000 0000 0000 00\n"
-                "• Ad Soyad: XXXXX XXXXX\n\n"
-                "*Papara:*\n"
-                "• Numara: 0000000000\n"
-                "• Ad Soyad: XXXXX XXXXX\n\n"
-                "*📝 Ödeme Sonrası:*\n"
-                "1. Ödeme dekontunu saklayın\n"
-                "2. /confirm_payment komutunu kullanın\n"
-                "3. İstediğiniz paketi ve ödeme yöntemini belirtin\n"
-                "4. Dekontu gönderin\n\n"
-                "Ödemeniz onaylandıktan sonra API Key'iniz otomatik olarak oluşturulacaktır."
-            )
             keyboard = create_keyboard([
                 [
-                    {"text": "📝 Ödeme Bildirimi Yap", "callback_data": "confirm_payment"}
+                    {"text": "💰 Satın Al", "url": "https://wa.me/908505503436"}
                 ]
             ])
-            send_message(chat_id, payment_info, keyboard)
+            send_message(
+                chat_id,
+                "🔑 API Key satın almak için WhatsApp üzerinden iletişime geçebilirsiniz.",
+                keyboard
+            )
         else:
             send_message(
                 chat_id,
                 "✅ Zaten aktif bir aboneliğiniz bulunmaktadır.\n"
                 "Süreniz dolmadan yeni satın alma işlemi yapamazsınız."
-            )
-
-    elif command == "/confirm_payment":
-        if not check_user_access(user_id):
-            user_state["waiting_for_payment"] = True
-            send_message(
-                chat_id,
-                "*💳 Ödeme Bildirimi*\n\n"
-                "Lütfen sırasıyla şu bilgileri gönderin:\n\n"
-                "1. Seçtiğiniz paket (1/3/12 ay)\n"
-                "2. Kullandığınız ödeme yöntemi\n"
-                "3. Dekont görüntüsü\n\n"
-                "İptal etmek için /cancel yazabilirsiniz."
-            )
-        else:
-            send_message(
-                chat_id,
-                "✅ Zaten aktif bir aboneliğiniz bulunmaktadır."
             )
 
     elif command == "/menu":
@@ -1483,36 +1466,13 @@ def handle_command(chat_id, user_id, command, args=None):
             send_message(
                 chat_id,
                 "⚠️ Menüyü kullanmak için API Key gereklidir.\n"
-                "Satın alma işlemi için /purchase komutunu kullanabilirsiniz."
+                "Satın alma işlemi için WhatsApp üzerinden iletişime geçebilirsiniz.",
+                create_keyboard([
+                    [
+                        {"text": "💰 Satın Al", "url": "https://wa.me/908505503436"}
+                    ]
+                ])
             )
-
-    elif command == "/apikey":
-        if check_user_access(user_id):
-            send_message(
-                chat_id,
-                "✅ API Key'iniz zaten doğrulanmış durumda.\n"
-                "Tüm özellikleri kullanabilirsiniz.",
-                create_ai_selection_keyboard(user_id)
-            )
-        else:
-            user_state["waiting_for_api_key"] = True
-            send_message(
-                chat_id,
-                "🔑 Lütfen API Key'inizi girin:\n\n"
-                "API Key formatı: `ABX-xxxxxxxx-xxxxxx-xxxx`\n"
-                "Satın alma işlemi için /purchase komutunu kullanabilirsiniz."
-            )
-
-    elif command == "/cancel":
-        if user_state.get("waiting_for_payment"):
-            user_state["waiting_for_payment"] = False
-            send_message(
-                chat_id,
-                "❌ Ödeme bildirimi iptal edildi.\n"
-                "Daha sonra tekrar deneyebilirsiniz."
-            )
-        else:
-            send_message(chat_id, "❌ İptal edilecek bir işlem bulunmuyor.")
 
     elif command == "/help":
         help_text = (
