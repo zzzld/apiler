@@ -1,0 +1,159 @@
+{
+  "users": {
+    "2111619152": {
+      "name": "Admin",
+      "created_at": "2025-03-09",
+      "api_keys": [
+        "ABI-cf916e216ce746f5"
+      ],
+      "usage": {
+        "total_requests": 0,
+        "images": 8,
+        "chats": 2
+      }
+    },
+    "123456789": {
+      "name": "Ahmet Müşteri",
+      "created_at": "2025-03-09",
+      "api_keys": [
+        "ABI-775e3a3fa847497e",
+        "ABI-840329d8f7d24d88"
+      ]
+    },
+    "145314539": {
+      "name": "Enes Deneme",
+      "created_at": "2025-03-09",
+      "api_keys": [
+        "ABI-64b62d03f1404f9d",
+        "ABI-dc1cd28ba9a14c44"
+      ]
+    },
+    "2111619153": {
+      "name": "User-2111619153",
+      "created_at": "2025-03-09",
+      "api_keys": [
+        "ABX-0AFE5FDC-CD93B6-2111619153"
+      ],
+      "last_active": "-",
+      "usage": {
+        "total_requests": 0,
+        "images": 0,
+        "chats": 0
+      }
+    },
+    "2111619154": {
+      "name": "User-2111619154",
+      "created_at": "2025-03-10",
+      "api_keys": [
+        "ABX-06220AE7-CE09D6-2111619154"
+      ],
+      "last_active": "-",
+      "usage": {
+        "total_requests": 0,
+        "images": 0,
+        "chats": 0
+      }
+    },
+    "2111619155": {
+      "name": "User-2111619155",
+      "created_at": "2025-03-10",
+      "api_keys": [
+        "ABX-E2E25437-564954-9155"
+      ],
+      "last_active": "-",
+      "usage": {
+        "total_requests": 0,
+        "images": 0,
+        "chats": 0
+      }
+    },
+    "2111619156": {
+      "name": "User-2111619156",
+      "created_at": "2025-03-10",
+      "api_keys": [
+        "ABX-1ACCF22E-564985-9156"
+      ],
+      "last_active": "-",
+      "usage": {
+        "total_requests": 0,
+        "images": 0,
+        "chats": 0
+      }
+    },
+    "2111619157": {
+      "name": "User-2111619157",
+      "created_at": "2025-03-10",
+      "api_keys": [
+        "ABX-5DFCB53F-565147-9157"
+      ],
+      "last_active": "-",
+      "usage": {
+        "total_requests": 0,
+        "images": 0,
+        "chats": 0
+      }
+    }
+  },
+  "api_keys": {
+    "ABI-cf916e216ce746f5": {
+      "user_id": 2111619152,
+      "expiry_date": "2035-03-07",
+      "active": true
+    },
+    "ABI-775e3a3fa847497e": {
+      "user_id": 123456789,
+      "expiry_date": "2025-04-08",
+      "active": true
+    },
+    "ABI-840329d8f7d24d88": {
+      "user_id": 123456789,
+      "expiry_date": "2025-04-08",
+      "active": true
+    },
+    "ABI-64b62d03f1404f9d": {
+      "user_id": 145314539,
+      "expiry_date": "2025-04-08",
+      "active": true
+    },
+    "ABI-dc1cd28ba9a14c44": {
+      "user_id": 145314539,
+      "expiry_date": "2025-04-08",
+      "active": true
+    },
+    "ABX-0AFE5FDC-CD93B6-2111619153": {
+      "user_id": 2111619153,
+      "expiry_date": "2025-04-08",
+      "active": true,
+      "created_at": "2025-03-09 16:12:22"
+    },
+    "ABX-06220AE7-CE09D6-2111619154": {
+      "user_id": 2111619154,
+      "expiry_date": "2025-04-09",
+      "active": true,
+      "created_at": "2025-03-10 00:36:22"
+    },
+    "ABX-E2E25437-564954-9155": {
+      "user_id": 2111619155,
+      "expiry_date": "2035-03-08",
+      "active": false,
+      "created_at": "2025-03-10 03:02:34"
+    },
+    "ABX-1ACCF22E-564985-9156": {
+      "user_id": 2111619156,
+      "expiry_date": "2026-03-10",
+      "active": false,
+      "created_at": "2025-03-10 03:03:05"
+    },
+    "ABX-5DFCB53F-565147-9157": {
+      "user_id": 2111619157,
+      "expiry_date": "2025-04-09",
+      "active": true,
+      "created_at": "2025-03-10 03:05:47"
+    }
+  },
+  "stats": {
+    "total_requests": 93,
+    "total_images": 56,
+    "total_chats": 37
+  }
+}
